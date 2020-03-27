@@ -11,29 +11,15 @@ import UIKit
 class TodoListViewController: UITableViewController {
     
     var itemArray = [Item]()
-    //setup standard UserDefaults for persistent data storage.
-    let defaults = UserDefaults.standard
+
+    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        print(dataFilePath!)
         
-        let newItem = Item()
-        newItem.title = "to do 1"
-        itemArray.append(newItem)
-        
-        let newItem2 = Item()
-        newItem2.title = "to do 2"
-        itemArray.append(newItem2)
-        
-        let newItem3 = Item()
-        newItem3.title = "to do 3"
-        itemArray.append(newItem3)
-
-        
-        //Load Elements from UserDefaults inside viewDidLoad.
-//        if let items = defaults.array(forKey: K.defaultsArray) as? [String]{
-//            itemArray = items
-//        }
+        loadItems()
     }
     
     //MARK: - TableView DataSource Methods.
@@ -55,22 +41,15 @@ class TodoListViewController: UITableViewController {
         
         //Ternary operator => value = condition ? valueIfTrue : valueIfFalse
         cell.accessoryType = item.done ? .checkmark : .none
-
-
-
-
-
         
         return cell
     }
     
     //MARK: - TableView Delegate Methods.
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let selectedCell = tableView.cellForRow(at: indexPath)
         
         itemArray[indexPath.row].done = !itemArray[indexPath.row].done
-        
-        tableView.reloadData()
+        saveItems()
         
         //to remove highlight from cell
         tableView.deselectRow(at: indexPath, animated: true)
@@ -88,8 +67,7 @@ class TodoListViewController: UITableViewController {
             newItem.title = textField.text!
             self.itemArray.append(newItem)
             
-            self.defaults.set(self.itemArray, forKey: K.defaultsArray)
-            self.tableView.reloadData()
+            self.saveItems()
             
         }
 
@@ -105,6 +83,31 @@ class TodoListViewController: UITableViewController {
         
     }
     
+//MARK: - Model manipulation methods
+    func saveItems(){
+        //Encode a new Item to Items.plist
+        let encoder = PropertyListEncoder()
+        do{
+            let data = try encoder.encode(itemArray)
+            try data.write(to: dataFilePath!)
+        } catch{
+            print("error encoding item array, \(error)")
+        }
+        self.tableView.reloadData()
+    }
+    
+    func loadItems(){
+
+            if let data = try? Data(contentsOf: dataFilePath!){
+                let decoder = PropertyListDecoder()
+                do{
+                    itemArray = try decoder.decode([Item].self, from: data)
+                } catch{
+                    print("Error decoding item array: \(error)")
+                }
+            }
+            
+    }
     
 }
 
