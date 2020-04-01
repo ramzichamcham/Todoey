@@ -9,6 +9,10 @@
 import Foundation
 
 struct K{
-    static let reusableIdentifier = "ToDoItemCell"
-    static let defaultsArray = "ToDoListArray"
+    static let itemCellReuseID = "ToDoItemCell"
+    static let categoryCellReuseID = "CategoryCell"
+
+//    static let defaultsArray = "ToDoListArray"
+    static let toItemsSegueID = "goToItems"
+    
 }

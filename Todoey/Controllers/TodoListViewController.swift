@@ -40,7 +40,7 @@ class TodoListViewController: UITableViewController {
         let item = itemArray[indexPath.row]
         
         // Fetch a cell of the appropriate type.
-        let cell = tableView.dequeueReusableCell(withIdentifier: K.reusableIdentifier, for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: K.itemCellReuseID, for: indexPath)
         
         // Configure the cell’s contents.
         cell.textLabel!.text = item.title
@@ -101,7 +101,7 @@ class TodoListViewController: UITableViewController {
         } catch{
             print("Error saving context \(error)")
         }
-        self.tableView.reloadData()
+        tableView.reloadData()
     }
     
     func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest()){
