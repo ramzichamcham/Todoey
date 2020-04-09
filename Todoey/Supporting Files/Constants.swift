@@ -14,5 +14,6 @@ struct K{
 
 //    static let defaultsArray = "ToDoListArray"
     static let toItemsSegueID = "goToItems"
-    
+    static let deleteIconName = "delete-icon"
+
 }
