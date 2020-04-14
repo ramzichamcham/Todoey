@@ -5,7 +5,6 @@
 //  Copyright © 2020 App Brewery. All rights reserved.
 
 
-import UIKit
 import RealmSwift
 
 class CategoryViewController: SwipeTableViewController {

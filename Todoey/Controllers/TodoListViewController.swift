@@ -6,10 +6,9 @@
 //  Copyright © 2019 App Brewery. All rights reserved.
 //
 
-import UIKit
 import RealmSwift
 
-class TodoListViewController: UITableViewController {
+class TodoListViewController: SwipeTableViewController {
     
     var todoItems: Results<Item>?
     
@@ -29,7 +28,7 @@ class TodoListViewController: UITableViewController {
         //where the data is being stored for our current app
         //print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
         
-        
+        tableView.rowHeight = 80
     }
     
     //MARK: - TableView DataSource Methods.
@@ -45,7 +44,7 @@ class TodoListViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         // Fetch a cell of the appropriate type.
-        let cell = tableView.dequeueReusableCell(withIdentifier: K.itemCellReuseID, for: indexPath)
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
         
         if let item = todoItems?[indexPath.row]{
             
@@ -126,29 +125,49 @@ class TodoListViewController: UITableViewController {
         
         tableView.reloadData()
     }
+    
+    //MARK: - Delete Data From Swipe
+    
+    override func updateModel(at indexPath: IndexPath) {
+        
+        if let itemToDelete = todoItems?[indexPath.row]{
+            do{
+                try realm.write{
+                    realm.delete(itemToDelete)
+                }
+            } catch{
+                print("Error deleting item \(error)")
+            }
+        }
+    }
+    
+    
+    
+    
 }
+
 
 
 //MARK: - UISearchBar Delegate methods
 
 extension TodoListViewController: UISearchBarDelegate{
-
+    
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         
         todoItems = todoItems?.filter("title CONTAINS[cd] %@", searchBar.text!).sorted(byKeyPath: "dateCreated", ascending: true)
         tableView.reloadData()
-
+        
     }
-
+    
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if searchBar.text?.count == 0 {
             loadItems()
-
+            
             DispatchQueue.main.async {
                 searchBar.resignFirstResponder()
-
+                
             }
-
+            
         }
     }
 }

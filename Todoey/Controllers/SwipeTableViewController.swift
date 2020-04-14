@@ -6,7 +6,6 @@
 //  Copyright © 2020 App Brewery. All rights reserved.
 //
 
-import UIKit
 import SwipeCellKit
 
 class SwipeTableViewController: UITableViewController, SwipeTableViewCellDelegate {
