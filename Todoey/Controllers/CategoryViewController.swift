@@ -6,6 +6,8 @@
 
 
 import RealmSwift
+import UIKit
+import ChameleonFramework
 
 class CategoryViewController: SwipeTableViewController {
     
@@ -33,8 +35,14 @@ class CategoryViewController: SwipeTableViewController {
         
         let cell = super.tableView(tableView, cellForRowAt: indexPath)
         
-        cell.textLabel?.text = categories?[indexPath.row].name ?? "No categories added yet"
-        
+        if let category = categories?[indexPath.row]{
+            cell.textLabel?.text = category.name ?? "No categories added yet"
+                     
+             cell.backgroundColor = UIColor(hexString: category.hexColor ?? "1D9BF6")
+        }
+ 
+                
+        tableView.separatorStyle = .none
         
         return cell
     }
@@ -102,7 +110,7 @@ class CategoryViewController: SwipeTableViewController {
         let action = UIAlertAction(title: "Add Category", style: .default) { (action) in
             let newCategory = Category()
             newCategory.name = textField.text!
-            
+            newCategory.hexColor = UIColor.randomFlat().hexValue()
             self.save(newCategory)
         }
         
