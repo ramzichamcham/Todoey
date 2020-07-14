@@ -15,6 +15,8 @@ class TodoListViewController: SwipeTableViewController {
     
     let realm = try! Realm()
     
+    @IBOutlet weak var searchBar: UISearchBar!
+    
     var selectedCategory: Category? {
         didSet{
             loadItems()
@@ -26,10 +28,32 @@ class TodoListViewController: SwipeTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //where the data is being stored for our current app
+        //where the user defaults data is stored
         //print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
         
         tableView.rowHeight = 80
+    }
+    
+    
+    override func viewWillAppear(_ animated: Bool) {
+
+        if let colorHex = selectedCategory?.hexColor{
+            title = selectedCategory!.name
+            
+            guard let navBar = navigationController?.navigationBar else{fatalError("Navigation Controller does not exist.")
+            }
+            if let navBarColor = UIColor(hexString: colorHex){
+                navBar.backgroundColor = navBarColor
+                
+                searchBar.barTintColor = navBarColor
+                
+                navBar.tintColor = ContrastColorOf(navBarColor, returnFlat: true)
+                    
+                navBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: ContrastColorOf(navBarColor, returnFlat: true)]
+
+            }
+
+        }
     }
     
     //MARK: - TableView DataSource Methods.
@@ -53,7 +77,7 @@ class TodoListViewController: SwipeTableViewController {
             cell.textLabel!.text = item.title
             
             //color we want UIColor(hesString: selectedCategory.hexColor)
-
+            
             if let color =  UIColor(hexString: selectedCategory!.hexColor)?.darken(byPercentage: CGFloat(indexPath.row)/CGFloat(2 * todoItems!.count)){
                 cell.backgroundColor = color
                 cell.textLabel?.textColor = ContrastColorOf(color, returnFlat: true)
